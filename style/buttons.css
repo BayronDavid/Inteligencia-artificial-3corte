@@ -1,0 +1,54 @@
+.myButton {
+    box-shadow: inset 0px 0px 15px 3px #23395e;
+    background: linear-gradient(to bottom, #2e466e 5%, #415989 100%);
+    background-color: #2e466e;
+    border-radius: 17px;
+    border: 1px solid #1f2f47;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+    font-size: 15px;
+    padding: 6px 13px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #263666;
+    min-width: 20%;
+    max-width: 50%;
+}
+
+.myButton:hover {
+    background: linear-gradient(to bottom, #415989 5%, #2e466e 100%);
+    background-color: #415989;
+}
+
+.myButton:active {
+    position: relative;
+    top: 1px;
+}
+.myButton-danger {
+    box-shadow: inset 0px 0px 15px 3px #ff0000;
+    background: linear-gradient(to bottom, #ac2b2b 5%, #f80202 100%);
+    background-color: #f50404;
+    border-radius: 17px;
+    border: 1px solid #ff0000;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+    font-size: 15px;
+    padding: 6px 13px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #662626;
+    min-width: 20%;
+    max-width: 50%;
+}
+
+.myButton-danger:hover {
+    background: linear-gradient(to bottom, #ff0000 5%, #6e2e2e 100%);
+    background-color: #ff0000;
+}
+
+.myButton-danger:active {
+    position: relative;
+    top: 1px;
+}

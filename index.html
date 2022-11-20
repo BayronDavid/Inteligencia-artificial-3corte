@@ -5,51 +5,64 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/buttons.css">
     <link rel="stylesheet" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css">
     <title>Document</title>
     <script src="js/jscolor/jscolor.js"></script>
     <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
     <script src="//unpkg.com/brain.js"></script>
-    <script type="module" src="js/index.js"></script>
 
 </head>
 <body>
-    <div class="grid">
-        <div class="text-box item">
-            <div class="text" id="bg">
-                <span id="text"> Hello World</span>
-            </div>
-            <div class="input-colors item">
-                Background
-                <input id="backgound-color" data-jscolor="{value: 'rgb(0, 0, 0)'}" onInput="updateBG(this.jscolor)">
-                Text
-                <input id="text-color"  data-jscolor="{value: 'rgb(255, 255, 255)'}"
-                        onInput="updateTxt(this.jscolor)">
-                <div class="button">
-                    <button id="send-button" > Add </button>
+    <div class="container">
+        <div class="header">
+            hola
+        </div>
+        <div class="grid">
+            <!-- Train-->
+            <div class="column item">
+                <div class="center text" id="bg">
+                    <span id="text"> <b>Hello World</b></span>
                 </div>
-                <div class="play">
-                    <button id="play-button" onclick="window.play_modal.showModal();">PLAY</button>
+                <div class="center item">
+                    <p>
+                        Background
+                        <input id="backgound-color" data-jscolor="{value: 'rgb(0, 0, 0)'}" onInput="updateBG(this.jscolor)">
+                    </p>
+                    <p>
+                        Text
+                        <input id="text-color" data-jscolor="{value: 'rgb(255, 255, 255)'}" onInput="updateTxt(this.jscolor)">
+                    </p>
+                    <div class="button">
+                        <a class="myButton" id="send-button"> Add </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Table -->
+            <div class="column item">
+                <div class="table" id="wrapper"></div>
+                <div class="center item">
+                    <a class="myButton-danger" id="clear-button"> Clear </a>
+                    <a class="myButton" id="train-button"> Train </a>
+                </div>
+            </div>
+            <!-- PLay -->
+            <div class="column item">
+                <div id="play-color" class="text">
+                    <p> <b>Parangaricutirimícuaro</b> </p>
+                    <p>De Parangaricutiro, del poblado de San Juan Parangaricutiro.</p>
+                    <p id="play-output"></p>
+                </div>
+                <div class="center item">
+                    <p>
+                        Background
+                        <input id="backgound-color-play" data-jscolor="{value: 'rgb(255, 0, 0)'}" onInput="">
+                    </p>
+                    <a class="myButton" id="play-button"> Play </a>
                 </div>
             </div>
         </div>
-        <div class="table">
-            <div id="wrapper"></div>
-            <button id="train-button" > Train </button>
-        </div>
-
-        </div>
-    </div>    
-    <dialog id="play_modal">
-        <div id="play-color">
-            <p> <b>Parangaricutirimícuaro</b> </p>
-            <p>De Parangaricutiro, del poblado de San Juan Parangaricutiro.</p>
-        </div>
-        <input id="backgound-color-play" data-jscolor="{value: 'rgb(255, 255, 255)'}" onInput="">
-        <br>
-        <button onclick="window.play_modal.close();">Cerrar</button>
-    </dialog>
-
+    </div>
 </body>
 <script>
     // These options apply to all color pickers on the page
@@ -64,5 +77,6 @@
         }
         jscolor.trigger('input'); // triggers 'onInput' on all color pickers when they are ready
 </script>
-</script>
+<script type="module" src="js/index.js"></script>
+
 </html>
