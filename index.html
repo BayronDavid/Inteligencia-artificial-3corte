@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="style/buttons.css">
+    <link rel="stylesheet" href="style/table.css">
     <link rel="stylesheet" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css">
     <title>Document</title>
     <script src="js/jscolor/jscolor.js"></script>
@@ -16,31 +17,65 @@
 <body>
     <div class="container">
         <div class="header">
-            hola
+            <div class="title">
+                1
+            </div>
+            <div class="title">
+                2
+            </div>
         </div>
         <div class="grid">
             <!-- Train-->
             <div class="column item">
-                <div class="center text" id="bg">
-                    <span id="text"> <b>Hello World</b></span>
-                </div>
-                <div class="center item">
-                    <p>
-                        Background
-                        <input id="backgound-color" data-jscolor="{value: 'rgb(0, 0, 0)'}" onInput="updateBG(this.jscolor)">
-                    </p>
-                    <p>
-                        Text
-                        <input id="text-color" data-jscolor="{value: 'rgb(255, 255, 255)'}" onInput="updateTxt(this.jscolor)">
-                    </p>
-                    <div class="button">
-                        <a class="myButton" id="send-button"> Add </a>
+
+                <div class="column-50">
+                    <div class="center text" id="bg">
+                            <div class="">
+                                <p id="text"> <b>Hello World</b></p>
+                            </div>
                     </div>
+                    <div class="center item">
+                        <p>
+                            Background: 
+                            <input id="backgound-color" data-jscolor="{value: 'rgb(0, 0, 0)'}" onInput="updateBG(this.jscolor)">
+                        </p>
+                        <p>
+                            Text: 
+                            <input id="text-color" data-jscolor="{value: 'rgb(255, 255, 255)'}" onInput="updateTxt(this.jscolor)">
+                        </p>
+                        <div class="button">
+                            <a class="myButton" id="send-button"> Add </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="instructions item">
+                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorem placeat quam tempora omnis, necessitatibus itaque illum, illo natus voluptas temporibus provident quod rem autem delectus debitis. Reiciendis dolorum iusto laudantium.
                 </div>
             </div>
             <!-- Table -->
-            <div class="column item">
-                <div class="table" id="wrapper"></div>
+            <div class="column item table">
+                <!-- <div class="table" id="wrapper"></div> -->
+                <div class="">
+                    <table class="styled-table table">
+                        <thead>
+                            <tr>
+                                <th colspan="3">Background</th>
+                                <th colspan="3">Text</th>
+                            </tr>
+                            <tr>
+                                <th>R</th>
+                                <th>G</th>
+                                <th>B</th>
+                                <th>R</th>
+                                <th>G</th>
+                                <th>B</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        </tbody>
+                    </table>
+                </div>
                 <div class="center item">
                     <a class="myButton-danger" id="clear-button"> Clear </a>
                     <a class="myButton" id="train-button"> Train </a>

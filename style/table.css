@@ -1,0 +1,17 @@
+.styled-table {
+    font-family: sans-serif;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.styled-table thead tr {
+    background-color: #949494;
+    color: #ffffff;
+    text-align: left;
+}
+
+table,
+th,
+td {
+    border: 2px solid rgb(255, 255, 255);
+    border-collapse: collapse;
+    text-align: center;
+}

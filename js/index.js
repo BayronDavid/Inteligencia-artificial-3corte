@@ -8,16 +8,19 @@ var play_button             = document.getElementById('play-button');
 var text_color              = document.getElementById('text-color');
 var background_color        = document.getElementById('backgound-color');
 var background_color_play   = document.getElementById('backgound-color-play');
-var table_wrapper           = document.getElementById('wrapper');
 var play_color_container    = document.getElementById('play-color');
 var play_output_text        = document.getElementById('play-output');
+
+var tbody       = document.getElementById('tbody');
+
+
 
 var data = [];
 var net = new brain.NeuralNetwork();
 // Initializations
 window.onload = function(){
     // Table
-    grid.render(table_wrapper);
+    fielTableStart()
     // Train initial data
     net.train(initial_data)
     // PLay initial data
@@ -25,20 +28,20 @@ window.onload = function(){
 }
 
 send_button.addEventListener('click', ()=>{
-    let chanels = Object.values(background_color.jscolor.channels).map(Math.floor);
+    let chanelsBG = Object.values(background_color.jscolor.channels).map(Math.floor);
+    let chanelsTxt = Object.values(text_color   .jscolor.channels).map(Math.floor);
     let b_w = Math.round(text_color.jscolor.channels.r / 255);
-    data.push([chanels[0], chanels[1], chanels[2], b_w])
-    grid.updateConfig({
-        data
-    }).forceRender();
-
+    data.push([chanelsBG[0], chanelsBG[1], chanelsBG[2], chanelsTxt[0], chanelsTxt[1], chanelsTxt[2]])
+    fieldTable(data)
 })
 
 train_button.addEventListener('click', ()=>{
     let obj = []; 
-    grid.config.data.forEach(item => {
+    data.forEach(item => {
         obj.push({'input':{'r': item[0], 'g': item[1], 'b':item[2]}, 'output':{'class': item[3]}});
     });
+
+    console.log(data);
     net.train(obj);
 })
 
@@ -63,4 +66,33 @@ background_color_play.oninput = function () {
         let picker = background_color_play.jscolor;
         play(picker);
     
+}
+
+function fielTableStart(){
+    initial_data.forEach(item => {
+        // data.push([item.input.r, item.input.r, item.input.b, item.output.class])
+        let tr = document.createElement('tr');
+        for (const [key, value] of Object.entries(item)) {
+            for (const [key_, value_] of Object.entries(value)){
+                let td = document.createElement('td');
+                td.innerText = value_;
+                tr.appendChild(td);
+            }
+        }
+        tbody.appendChild(tr);
+    })
+}
+
+function fieldTable(data){
+    tbody.innerHTML = "";
+    fielTableStart();
+    data.forEach(item =>{
+        let tr = document.createElement('tr');
+        item.forEach(color =>{
+            let td = document.createElement('td');
+            td.innerText = color;
+            tr.appendChild(td);
+        })
+        tbody.appendChild(tr);
+    })
 }
