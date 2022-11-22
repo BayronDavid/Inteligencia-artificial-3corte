@@ -1,5 +1,4 @@
-import	{grid} from './table.js'
-// import	{net} from './brain.js'
+import	{net} from './brain.js'
 import initial_data from '../data/BN_data.json' assert {type: 'json'} 
 
 var send_button             = document.getElementById('send-button');
@@ -10,19 +9,18 @@ var background_color        = document.getElementById('backgound-color');
 var background_color_play   = document.getElementById('backgound-color-play');
 var play_color_container    = document.getElementById('play-color');
 var play_output_text        = document.getElementById('play-output');
-
-var tbody       = document.getElementById('tbody');
-
+var clear_button            = document.getElementById('clear-button');
+var tbody                   = document.getElementById('tbody');
 
 
 var data = [];
-var net = new brain.NeuralNetwork();
 // Initializations
 window.onload = function(){
+    data = initial_data;
     // Table
-    fielTableStart()
+    fieldTable(initial_data)
     // Train initial data
-    net.train(initial_data)
+    train(initial_data)
     // PLay initial data
     play(background_color_play.jscolor)
 }
@@ -30,32 +28,14 @@ window.onload = function(){
 send_button.addEventListener('click', ()=>{
     let chanelsBG = Object.values(background_color.jscolor.channels).map(Math.floor);
     let chanelsTxt = Object.values(text_color   .jscolor.channels).map(Math.floor);
-    let b_w = Math.round(text_color.jscolor.channels.r / 255);
     data.push([chanelsBG[0], chanelsBG[1], chanelsBG[2], chanelsTxt[0], chanelsTxt[1], chanelsTxt[2]])
-    fieldTable(data)
+    fieldTable([[chanelsBG[0], chanelsBG[1], chanelsBG[2], chanelsTxt[0], chanelsTxt[1], chanelsTxt[2]]])
 })
 
 train_button.addEventListener('click', ()=>{
-    let obj = []; 
-    data.forEach(item => {
-        obj.push({'input':{'r': item[0], 'g': item[1], 'b':item[2]}, 'output':{'class': item[3]}});
-    });
-
-    console.log(data);
-    net.train(obj);
+    train(data);
+    console.log(JSON.stringify(data));
 })
-
-function play(picker){
-    if (document.readyState === 'complete') {
-        let chanels = Object.values(picker.channels).map(Math.floor);
-        let output  = net.run({ 'r': chanels[0], 'g': chanels[1], 'b': chanels[2] });
-        output      = Math.round(Object.values(output)) * 255;
-        
-        play_color_container.style.background   = picker.toBackground();
-        play_color_container.style.color        = `rgb(${output}, ${output}, ${output})`;
-        play_output_text.innerHTML = JSON.stringify({ 'r': chanels[0], 'g': chanels[1], 'b': chanels[2], output });
-    }
-}
 
 play_button.addEventListener('click', ()=>{
     let picker = background_color_play.jscolor;
@@ -68,31 +48,70 @@ background_color_play.oninput = function () {
     
 }
 
-function fielTableStart(){
-    initial_data.forEach(item => {
-        // data.push([item.input.r, item.input.r, item.input.b, item.output.class])
-        let tr = document.createElement('tr');
-        for (const [key, value] of Object.entries(item)) {
-            for (const [key_, value_] of Object.entries(value)){
-                let td = document.createElement('td');
-                td.innerText = value_;
-                tr.appendChild(td);
-            }
-        }
-        tbody.appendChild(tr);
-    })
-}
+clear_button.addEventListener('click', ()=>{
+    clear();
+})
 
 function fieldTable(data){
-    tbody.innerHTML = "";
-    fielTableStart();
-    data.forEach(item =>{
-        let tr = document.createElement('tr');
-        item.forEach(color =>{
-            let td = document.createElement('td');
-            td.innerText = color;
-            tr.appendChild(td);
+    if(data.length != 0){
+        data.forEach(item => {
+            let tx_color = `rgba(${item[3]}, ${item[4]}, ${item[5]}, 0.2)`
+            let bg_color = `rgba(${item[0]}, ${item[1]}, ${item[2]}, 0.2)`
+            let count = 0;
+            let tr = document.createElement('tr');
+            item.forEach(color => {
+                let td = document.createElement('td');
+                td.innerText = color;
+                tr.appendChild(td);
+
+                td.style.background = count < 3 ? bg_color : tx_color;
+                count += 1;
+            })
+            tbody.appendChild(tr);
         })
-        tbody.appendChild(tr);
-    })
+    }else{
+        tbody.innerHTML = ""
+    }
+}
+
+function train(data){
+    if(data.length != 0){
+        let net_r = [];
+        let net_g = [];
+        let net_b = [];
+        data.forEach(item => {
+            net_r.push({ 'input': { 'r': item[0], 'g': item[1], 'b': item[2] }, 'output': { 'r': item[3] / 255 } });
+            net_g.push({ 'input': { 'r': item[0], 'g': item[1], 'b': item[2] }, 'output': { 'g': item[4] / 255 } });
+            net_b.push({ 'input': { 'r': item[0], 'g': item[1], 'b': item[2] }, 'output': { 'b': item[5] / 255 } });
+        });
+
+        net[0].train(net_r);
+        net[1].train(net_g);
+        net[2].train(net_b);
+    }else{
+        console.log('Without data');
+    }
+}
+
+function clear(){
+    data = [];
+    tbody.innerHTML = ""
+}
+
+function play(picker) {
+    if (document.readyState === 'complete') {
+
+
+        let chanels = Object.values(picker.channels)
+        let output = [];
+        output.push(net[0].run({ 'r': chanels[0], 'g': chanels[1], 'b': chanels[2] }));
+        output.push(net[1].run({ 'r': chanels[0], 'g': chanels[1], 'b': chanels[2] }));
+        output.push(net[2].run({ 'r': chanels[0], 'g': chanels[1], 'b': chanels[2] }));
+
+        output = output.map(x => { return Math.round(Object.values(x) * 255) });
+
+        play_color_container.style.background = picker.toBackground();
+        play_color_container.style.color = `rgb(${output[0]}, ${output[1]}, ${output[2]})`;
+        // play_output_text.innerHTML = JSON.stringify({ 'r': chanels[0], 'g': chanels[1], 'b': chanels[2], output });
+    }
 }

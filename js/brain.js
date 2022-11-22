@@ -1,2 +1,6 @@
-export var net = new brain.NeuralNetwork();
+export var net = [
+    new brain.NeuralNetwork(), 
+    new brain.NeuralNetwork(), 
+    new brain.NeuralNetwork(),
+]
 
