@@ -1,4 +1,5 @@
 import	{net} from './brain.js'
+import {Neurona} from './neurona.js';
 import initial_data from '../data/BN_data.json' assert {type: 'json'} 
 
 var send_button             = document.getElementById('send-button');
@@ -16,7 +17,9 @@ var deco5                   = document.getElementById('deco5');
 var play_contrast           = document.getElementById('play_contrast');
 var output_text             = document.getElementById('output_text');
 
+var neuronas = [];
 
+neuronas[0] = new Neurona(3);
 var data = [];
 // Initializations
 window.onload = function(){
@@ -74,14 +77,25 @@ function fieldTable(data){
 
 function train(data){
     if(data.length != 0){
+        console.log('enro');
         let net_r = [];
         let net_g = [];
         let net_b = [];
+
+        let test_inputs = []
+        let test_outputs = []
+
         data.forEach(item => {
             net_r.push({ 'input': { 'r': item[0], 'g': item[1], 'b': item[2] }, 'output': { 'r': item[3] / 255 } });
             net_g.push({ 'input': { 'r': item[0], 'g': item[1], 'b': item[2] }, 'output': { 'g': item[4] / 255 } });
             net_b.push({ 'input': { 'r': item[0], 'g': item[1], 'b': item[2] }, 'output': { 'b': item[5] / 255 } });
+
+            test_inputs.push([item[0], item[1], item[2]]);
+            test_outputs.push(item[3]);
         });
+
+        console.log(neuronas[0].entrenar(test_inputs, test_outputs));
+
 
         net[0].train(net_r);
         net[1].train(net_g);
@@ -99,9 +113,10 @@ function clear(){
 function play(picker) {
     if (document.readyState === 'complete') {
 
-
+        
         let chanels = Object.values(picker.channels)
         let output = [];
+ 
         output.push(net[0].run({ 'r': chanels[0], 'g': chanels[1], 'b': chanels[2] }));
         output.push(net[1].run({ 'r': chanels[0], 'g': chanels[1], 'b': chanels[2] }));
         output.push(net[2].run({ 'r': chanels[0], 'g': chanels[1], 'b': chanels[2] }));
