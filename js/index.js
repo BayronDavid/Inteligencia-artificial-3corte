@@ -3,14 +3,18 @@ import initial_data from '../data/BN_data.json' assert {type: 'json'}
 
 var send_button             = document.getElementById('send-button');
 var train_button            = document.getElementById('train-button');
-var play_button             = document.getElementById('play-button');
 var text_color              = document.getElementById('text-color');
 var background_color        = document.getElementById('backgound-color');
 var background_color_play   = document.getElementById('backgound-color-play');
-var play_color_container    = document.getElementById('play-color');
-var play_output_text        = document.getElementById('play-output');
+
 var clear_button            = document.getElementById('clear-button');
 var tbody                   = document.getElementById('tbody');
+
+var play_txt_bg             = document.getElementById('play_txt_bg');
+var play_txt                = document.getElementById('play_txt');
+var deco5                   = document.getElementById('deco5');
+var play_contrast           = document.getElementById('play_contrast');
+var output_text             = document.getElementById('output_text');
 
 
 var data = [];
@@ -37,15 +41,9 @@ train_button.addEventListener('click', ()=>{
     console.log(JSON.stringify(data));
 })
 
-play_button.addEventListener('click', ()=>{
-    let picker = background_color_play.jscolor;
-    play(picker);
-})
-
 background_color_play.oninput = function () {
         let picker = background_color_play.jscolor;
         play(picker);
-    
 }
 
 clear_button.addEventListener('click', ()=>{
@@ -110,8 +108,18 @@ function play(picker) {
 
         output = output.map(x => { return Math.round(Object.values(x) * 255) });
 
-        play_color_container.style.background = picker.toBackground();
-        play_color_container.style.color = `rgb(${output[0]}, ${output[1]}, ${output[2]})`;
-        // play_output_text.innerHTML = JSON.stringify({ 'r': chanels[0], 'g': chanels[1], 'b': chanels[2], output });
+        play_txt_bg.setAttribute('fill', `${picker.toRGBString() }`);
+        deco5.setAttribute('fill', ` rgba(${ output[0]}, ${ output[1]}, ${ output[2]}, 0.25)`);
+        play_txt.style.color            = ` rgb(${output[0]}, ${output[1]}, ${output[2]})`
+        play_contrast.style.color       = `${picker.toRGBString()}`;
+        play_contrast.style.backgroundColor = ` rgb(${output[0]}, ${output[1]}, ${output[2]})`;
+
+        let text =
+        `Text color:  rgb(${output[0]}, ${output[1]}, ${output[2]})
+Background Color: ${picker.toRGBString() }
+BackGround 2 color: rgba(${ output[0]}, ${output[1]}, ${output[2]}, 0.25)
+            ` 
+
+        output_text.value = text;
     }
 }

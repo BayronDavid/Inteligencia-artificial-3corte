@@ -1,47 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="style/buttons.css">
     <link rel="stylesheet" href="style/table.css">
+    <link rel="stylesheet" href="style/fluid.css" />
     <link rel="stylesheet" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css">
+    <link rel="stylesheet" href="style/style.css">
     <title>Document</title>
     <script src="js/jscolor/jscolor.js"></script>
     <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
     <script src="//unpkg.com/brain.js"></script>
-
+    <script>document.documentElement.className = 'js';</script>
 </head>
+
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="title">
-                1
-            </div>
-            <div class="title">
-                2
-            </div>
-        </div>
+    <svg class="hidden">
+        <symbol id="icon-arrow" viewBox="0 0 24 24">
+            <title>arrow</title>
+            <polygon points="6.3,12.8 20.9,12.8 20.9,11.2 6.3,11.2 10.2,7.2 9,6 3.1,12 9,18 10.2,16.8 " />
+        </symbol>
+        <symbol id="icon-drop" viewBox="0 0 24 24">
+            <title>drop</title>
+            <path
+                d="M12,21c-3.6,0-6.6-3-6.6-6.6C5.4,11,10.8,4,11.4,3.2C11.6,3.1,11.8,3,12,3s0.4,0.1,0.6,0.3c0.6,0.8,6.1,7.8,6.1,11.2C18.6,18.1,15.6,21,12,21zM12,4.8c-1.8,2.4-5.2,7.4-5.2,9.6c0,2.9,2.3,5.2,5.2,5.2s5.2-2.3,5.2-5.2C17.2,12.2,13.8,7.3,12,4.8z" />
+            <path
+                d="M12,18.2c-0.4,0-0.7-0.3-0.7-0.7s0.3-0.7,0.7-0.7c1.3,0,2.4-1.1,2.4-2.4c0-0.4,0.3-0.7,0.7-0.7c0.4,0,0.7,0.3,0.7,0.7C15.8,16.5,14.1,18.2,12,18.2z" />
+        </symbol>
+        <symbol id="icon-github" viewBox="0 0 32.6 31.8">
+            <title>github</title>
+            <path
+                d="M16.3,0C7.3,0,0,7.3,0,16.3c0,7.2,4.7,13.3,11.1,15.5c0.8,0.1,1.1-0.4,1.1-0.8c0-0.4,0-1.4,0-2.8c-4.5,1-5.5-2.2-5.5-2.2c-0.7-1.9-1.8-2.4-1.8-2.4c-1.5-1,0.1-1,0.1-1c1.6,0.1,2.5,1.7,2.5,1.7c1.5,2.5,3.8,1.8,4.7,1.4c0.1-1.1,0.6-1.8,1-2.2c-3.6-0.4-7.4-1.8-7.4-8.1c0-1.8,0.6-3.2,1.7-4.4C7.4,10.7,6.8,9,7.7,6.8c0,0,1.4-0.4,4.5,1.7c1.3-0.4,2.7-0.5,4.1-0.5c1.4,0,2.8,0.2,4.1,0.5c3.1-2.1,4.5-1.7,4.5-1.7c0.9,2.2,0.3,3.9,0.2,4.3c1,1.1,1.7,2.6,1.7,4.4c0,6.3-3.8,7.6-7.4,8c0.6,0.5,1.1,1.5,1.1,3c0,2.2,0,3.9,0,4.5c0,0.4,0.3,0.9,1.1,0.8c6.5-2.2,11.1-8.3,11.1-15.5C32.6,7.3,25.3,0,16.3,0z" />
+        </symbol>
+        <!-- All deco shapes -->
+        <defs>
+            <path id="deco1"
+                d="M 161,54.69 C 230.4,4.986 303.7,8.661 414.4,92.19 465.7,130.9 432.3,211.4 460,279.5 481,331.2 449.7,430.4 381.1,427 287.1,422.3 172.4,503.8 99.27,444.6 21.03,381.1 10.32,258.3 55.25,145.6 73.73,99.3 129.3,77.36 161,54.69 Z" />
+            <path id="deco2"
+                d="M 119.8,69.41 C 213.5,18.01 367.2,-1.306 440.4,76.58 482.9,121.9 435.3,200.8 432.9,262.9 431.1,310.6 461.3,372.1 427.7,406 342.4,492 158.3,499.3 64.62,422.5 10.09,377.8 18.76,282.6 32.51,213.5 43.46,158.4 70.61,96.36 119.8,69.41 Z" />
+            <path id="deco3"
+                d="M 77.03,75.72 C 147.9,0.2308 309,13.37 387.6,80.44 471.8,152.4 517.2,325.6 442.9,407.5 350.2,509.8 43.77,516.2 29.67,378.8 20.48,289.3 80.25,270.4 87.78,212 93.61,166.8 45.85,108.9 77.03,75.72 Z" />
+            <path id="deco4"
+                d="M 38.35,160.1 C 74.92,86.34 178.1,44.04 260.1,51.51 348.2,59.54 441.6,126.9 473.5,209.4 499.3,276 485,371.9 431.9,419.6 348.2,494.9 185.6,517.4 95.49,449.9 16.71,390.8 -5.393,248.3 38.35,160.1 Z" />
+            <path id="deco5"
+                d="M 49.94,386.5 C 9.795,286.4 7.674,129.7 94.72,65.99 188.4,-2.586 371.8,28.99 438.1,124.3 486.9,194.5 503.7,389.2 390.4,376.4 277.1,363.5 238.6,482 155.1,469.7 110.9,463.2 66.57,428 49.94,386.5 Z" />
+            <path id="deco6"
+                d="M 261.7,380.3 C 204.7,399.8 154.1,482.7 98.91,458.5 26.64,426.9 13.2,309.8 29.35,232.6 43.76,163.6 101.4,97.37 167.4,72.34 248,41.97 422.1,-2.762 423.4,107.7 424.6,218.1 507.5,272.4 464.3,336.7 425.7,394.2 327,357.9 261.7,380.3 Z" />
+            <path id="deco7"
+                d="M 451.9,392.4 C 365.4,455.1 212.9,465.1 131.6,395.9 55.74,331.3 2.509,152.7 87.24,100.3 135.8,70.3 177.8,170.2 227.3,198.6 307.2,244.4 442.2,228.9 478.7,313.5 489.7,339 474.4,376.1 451.9,392.4 Z" />
+        </defs>
+    </svg>
         <div class="grid">
             <!-- Train-->
             <div class="column item">
-
                 <div class="column-50">
-                    <div class="center text" id="bg">
-                            <div class="">
-                                <p id="text"> <b>Hello World</b></p>
+                    <div class="center">
+                        <div id="bg" class="text">
+                            <p id="text"> <b>Text</b></p>
+                            <div class="center">
+                                <div class="contrast" id="contrast">
+                                    Contrast
+                                </div>
                             </div>
+                        </div>
                     </div>
                     <div class="center item">
                         <p>
-                            Background: 
-                            <input id="backgound-color" data-jscolor="{value: 'rgb(0, 0, 0)'}" onInput="updateBG(this.jscolor)">
+                            Background:
+                            <input id="backgound-color" data-jscolor="{value: 'rgb(0, 0, 0)'}"
+                                onInput="updateBG(this.jscolor)">
                         </p>
                         <p>
-                            Text: 
-                            <input id="text-color" data-jscolor="{value: 'rgb(255, 255, 255)'}" onInput="updateTxt(this.jscolor)">
+                            Text:
+                            <input id="text-color" data-jscolor="{value: 'rgb(255, 255, 255)'}"
+                                onInput="updateTxt(this.jscolor)">
                         </p>
                         <div class="button">
                             <a class="myButton" id="send-button"> Add </a>
@@ -50,11 +85,14 @@
                 </div>
 
                 <div class="instructions item">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorem placeat quam tempora omnis, necessitatibus itaque illum, illo natus voluptas temporibus provident quod rem autem delectus debitis. Reiciendis dolorum iusto laudantium.
+                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorem placeat quam tempora omnis,
+                    necessitatibus itaque illum, illo natus voluptas temporibus provident quod rem autem delectus
+                    debitis. Reiciendis dolorum iusto laudantium.
                 </div>
             </div>
             <!-- Table -->
             <div class="column item">
+                <div class="">
                     <div class="table">
                         <table class="styled-table">
                             <thead>
@@ -75,6 +113,7 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
                 <div class="center item">
                     <a class="myButton-danger" id="clear-button"> Clear </a>
                     <a class="myButton" id="train-button"> Train </a>
@@ -82,37 +121,67 @@
             </div>
             <!-- PLay -->
             <div class="column item">
-                <div id="play-color" class="text">
-                    <p> <b>Parangaricutirimícuaro</b> </p>
-                    <p>De Parangaricutiro, del poblado de San Juan Parangaricutiro.</p>
-                    <div class="overflow">
-                        <p id="play-output"></p>
+                <div class="center">
+                    <div class="fluid">
+                        <div class="item_ item_--style-5" data-animation-path-duration="3000" data-animation-path-easing="easeInOutQuint"
+                            data-path-rotate="90"
+                            data-morph-path="M 368.1,46.42 C 461,96.69 473.7,266.2 422.3,358.4 379.1,436 259.6,484.8 175,457.5 107.5,435.7 12.65,329.8 60.93,277.7 95.18,240.8 154,379.3 194.2,348.9 250.7,306 116,204.1 148.4,140.9 184.8,70.02 298,8.455 368.1,46.42 Z"
+                            data-animation-image-duration="3000" data-animation-image-easing="easeInOutQuint" data-image-rotate="-30"
+                            data-animation-deco-duration="3000" data-animation-deco-easing="easeOutQuint">
+                            <svg class="item___svg" id="play_txt_bg">
+                                <clipPath id="clipShape5">
+                                    <path class="item___clippath"
+                                        d="M 451.5,185.8 C 441.5,266.2 339.6,305 272.3,350.2 207.7,393.6 226.7,444.7 182.6,447.9 132.8,451.4 83.97,399.9 66.37,353.1 34.6,268.4 41.16,141.8 112,85.44 186.1,26.33 313.8,54.1 396,101.4 425.2,118.2 455.6,152.4 451.5,185.8 Z" />
+                                </clipPath>
+                                <g class="item___deco">
+                                    <use xlink:href="#deco5" />
+                                </g>
+                                <g clip-path="url(#clipShape5)">
+                                    <use xlink:href="#deco1" />
+                                </g>
+                            </svg>
+                            <div class="item___meta">
+                                <div class="center">
+                                    <p id="play_txt" class="text"> <b>Text</b> </p>
+                                    <div class="contrast" id="play_contrast">
+                                        Contrast
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="center item">
-                    <p>
-                        Background
-                        <input id="backgound-color-play" data-jscolor="{value: 'rgb(255, 0, 0)'}" onInput="">
-                    </p>
-                    <a class="myButton" id="play-button"> Play </a>
+                    <div>
+                        <p>
+                            Background
+                            <input id="backgound-color-play" data-jscolor="{value: 'rgb(0, 0, 0)'}" onInput="">
+                        </p>
+                        <div class="output">
+                            <textarea id="output_text" rows="3" cols="50">Write something here</textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 </body>
 <script>
     // These options apply to all color pickers on the page
-        jscolor.presets.default = {
-            format: 'rgb'
-        };
-        function updateBG(picker) {
-            document.getElementById('bg').style.background = picker.toBackground();
-        }
-        function updateTxt(picker) {
-            document.getElementById('text').style.color = picker.toRGBAString();
-        }
-        jscolor.trigger('input'); // triggers 'onInput' on all color pickers when they are ready
+    jscolor.presets.default = {
+        format: 'rgb'
+    };
+    function updateBG(picker) {
+        document.getElementById('bg').style.background = picker.toBackground();
+        document.getElementById('contrast').style.color         = picker.toRGBAString();
+    }
+    function updateTxt(picker) {
+        document.getElementById('text').style.color = picker.toRGBAString();
+        document.getElementById('contrast').style.background    = picker.toBackground();
+    }
+
+    jscolor.trigger('input'); // triggers 'onInput' on all color pickers when they are ready
 </script>
 <script type="module" src="js/index.js"></script>
-
+<script src="js/anime.min.js"></script>
+<script src="js/main.js"></script>
 </html>
