@@ -1,13 +1,9 @@
-// import	{net} from './brain.js'
-// import {Neurona} from './neurona.js';
 import {Neurona} from './perceptron.js'
-
 // Import initial datasets
-
 import bw_data  from '../data/BlackWhite.json'  assert {type: 'json'} 
 import gs_data  from '../data/Grayscale.json'   assert {type: 'json'} 
 import rgb_data from '../data/RGB.json'         assert {type: 'json'} 
-import hex_data from '../data/hex.json'         assert {type: 'json'} 
+import train_data from '../data/Train.json'         assert {type: 'json'} 
 
 var send_button             = document.getElementById('send-button');
 var train_button            = document.getElementById('train-button');
@@ -16,7 +12,9 @@ var background_color        = document.getElementById('backgound-color');
 var background_color_play   = document.getElementById('backgound-color-play');
 
 var clear_button            = document.getElementById('clear-button');
+
 var tbody                   = document.getElementById('tbody');
+var thead                   = document.getElementById('thead');
 
 var play_txt_bg             = document.getElementById('play_txt_bg');
 var play_txt                = document.getElementById('play_txt');
@@ -25,49 +23,70 @@ var play_contrast           = document.getElementById('play_contrast');
 var output_text             = document.getElementById('output_text');
 
 // Select mode
-const bw_rd   = document.getElementById("bw") 
-const gs_rd   = document.getElementById("gs") 
-const rgb_rd  = document.getElementById("rgb") 
-const hex_rd  = document.getElementById("hex") 
+const bw_rd     =  document.getElementById("bw") 
+const gs_rd     = document.getElementById("gs") 
+const rgb_rd    = document.getElementById("rgb") 
+
+// const train_ri      = document.getElementById("train_ri") 
+// const train_field   = document.getElementById("train_field") 
+// const btn_train     = document.getElementById("btn_train") 
 
 const epochs  = document.getElementById("epochs") 
 
 const mode_inputs = document.querySelectorAll(".mode_input")
 
-var net = [];
+var type_mode = 'bw';
 
-net[0] = new Neurona([3, 4, 1]);
-net[1] = new Neurona([3, 4, 1]);
-net[2] = new Neurona([3, 4, 1]);
+var net = [];
 
 var data = [];
 // Initializations
 window.onload = function(){
     data = bw_data;
     // Table
-    fieldTable(bw_data)
+    fieldTable(bw_data);
+    // create neural networks by type_mode
+    createNet();
     // Train initial data
-    train(bw_data)
+    train(bw_data);
     // PLay initial data
-    play(background_color_play.jscolor)
+    play(background_color_play.jscolor);
 }
 
 // Listen mode_inputs changes
-
 mode_inputs.forEach(input=>{
     input.addEventListener('change', ()=>{
+        if(!train_ri.checked){
+            train_field.classList.add('disable')
+            btn_train.classList.add('disable')
+        }
+
         switch(input.id){
             case 'bw': 
+            if(input.checked){
+                type_mode = input.id;
                 reset(bw_data);
+            }
                 break;
             case 'gs': 
-                reset(gs_data);
+                if (input.checked) {                    
+                    type_mode = input.id;
+                    reset(gs_data);
+                }
                 break;
             case 'rgb': 
-                reset(rgb_data);
+                if (input.checked) {                    
+                    type_mode = input.id;
+                    reset(rgb_data);
+                }
                 break;
-            case 'hex': 
-                reset(hex_data);
+            case 'train_ri': 
+                if (input.checked) {
+                    type_mode = input.id;
+                    reset(train_data);
+                    train_field.classList.remove('disable')
+                    btn_train.classList.remove('disable')
+                }
                 break;
         }
     })
@@ -83,7 +102,6 @@ send_button.addEventListener('click', ()=>{
     if(bw_rd.checked || gs_rd.checked){
         fieldTable([[chanelsBG[0], chanelsBG[1], chanelsBG[2], chanelsTxt[0], chanelsTxt[1], chanelsTxt[2]]])
     }else{
-        console.log('entro', gs_rd.checked);
         // Se envierten las entradas y salidas con el fin de generar mas datos de entrenamiento
         // Si entra [0, 0, 0] -> [255, 255, 255] se genera otro dato [22, 255, 0] -> [0, 0, 0]
         data.push([chanelsTxt[0], chanelsTxt[1], chanelsTxt[2], chanelsBG[0], chanelsBG[1], chanelsBG[2]])
@@ -95,6 +113,7 @@ send_button.addEventListener('click', ()=>{
 
 train_button.addEventListener('click', ()=>{
     train(data);
+    play(background_color_play.jscolor)
     console.log(JSON.stringify(data));
 })
 
@@ -108,13 +127,89 @@ clear_button.addEventListener('click', ()=>{
 })
 
 function fieldTable(data){
+    let bg_color;
+    let tx_color;
+
+    let head;
+
+    switch(type_mode){
+        case 'bw':
+            head = `<tr>
+                            <th colspan="3">Background</th>
+                            <th colspan="1">Text</th>
+                        </tr>
+                        <tr>
+                            <th>R</th>
+                            <th>G</th>
+                            <th>B</th>
+                            <th>B | W</th>
+                        </tr>`
+
+            thead.innerHTML = head;
+            break;
+        case 'gs':
+            head = `<tr>
+                            <th colspan="3">Background</th>
+                            <th colspan="1">Text</th>
+                        </tr>
+                        <tr>
+                            <th>R</th>
+                            <th>G</th>
+                            <th>B</th>
+                            <th> Grayscale</th>
+                        </tr>`
+
+            thead.innerHTML = head;
+            break;
+        case 'rgb':
+            head = `<tr>
+                            <th colspan="3">Background</th>
+                            <th colspan="3">Text</th>
+                        </tr>
+                        <tr>
+                            <th>R</th>
+                            <th>G</th>
+                            <th>B</th>
+                            <th>R</th>
+                            <th>G</th>
+                            <th>B</th>
+                        </tr>`
+
+            thead.innerHTML = head;
+            break;
+        case 'train_ri':
+            head = `<tr>
+                            <th colspan="3">Background</th>
+                            <th colspan="3">Text</th>
+                        </tr>
+                        <tr>
+                            <th>R</th>
+                            <th>G</th>
+                            <th>B</th>
+                            <th>R</th>
+                            <th>G</th>
+                            <th>B</th>
+                        </tr>`
+
+            thead.innerHTML = head;
+            break;
+    }
+
     if(data.length != 0){
         data.forEach(item => {
-            let tx_color = `rgba(${item[3]}, ${item[4]}, ${item[5]}, 0.5)`
-            let bg_color = `rgba(${item[0]}, ${item[1]}, ${item[2]}, 0.5)`
             let count = 0;
             let tr = document.createElement('tr');
             item.forEach(color => {
+
+                bg_color = `rgba(${item[0]}, ${item[1]}, ${item[2]}, 0.5)`;
+
+                if(type_mode=="bw" || type_mode=="gs"){
+                    // Si es b/n o scala de grises solo toma el primer color del rgb y lo repite en todos los canales 
+                    tx_color = `rgba(${item[3]}, ${item[3]}, ${item[3]}, 0.7)`;
+                }else{
+                    tx_color = `rgba(${item[3]}, ${item[4]}, ${item[5]}, 0.5)`;
+                }
+
                 let td = document.createElement('td');
                 td.innerText = color;
                 tr.appendChild(td);
@@ -131,29 +226,32 @@ function fieldTable(data){
 
 function train(data){
     if(data.length != 0){
-        let net_r = [];
-        let net_g = [];
-        let net_b = [];
+        let input   = [];
+        let outputs = [];
+        data.forEach((item, index) => {
+            input.push([item[0]/255, item[1]/255, item[2]/255]);
+            
+            if(type_mode == "bw" || type_mode == "gs"){
+                let aux = []
+                aux.push([item[3] / 255]);
+                aux.push([item[3] / 255]);
+                aux.push([item[3] / 255]);
 
-        let output_net_r = [];
-        let output_net_g = [];
-        let output_net_b = [];
+                outputs.push(aux);
+            }else{
+                let aux = []
+                aux.push([item[3] / 255]);
+                aux.push([item[4] / 255]);
+                aux.push([item[5] / 255]);
 
-
-        data.forEach(item => {
-            net_r.push([item[0]/255, item[1]/255, item[2]/255]);
-            net_g.push([item[0]/255, item[1]/255, item[2]/255]);
-            net_b.push([item[0]/255, item[1]/255, item[2]/255]);
-
-            output_net_r.push([item[3] / 255]);
-            output_net_g.push([item[4] / 255]);
-            output_net_b.push([item[5] / 255]);
+                outputs.push(aux);
+            }
         });
 
-        
-        net[0].train({ input: net_r, output: output_net_r, epochs: 200 });
-        net[1].train({ input: net_g, output: output_net_g, epochs: 200 });
-        net[2].train({ input: net_b, output: output_net_b, epochs: 200 });
+        net.forEach((net_, index) =>{
+            net_.train({ input: input, output: outputs[index], epochs: epochs.value});
+        })
+
     }else{
         console.log('Without data');
     }
@@ -162,34 +260,46 @@ function train(data){
 function clear(){
     data = [];
     tbody.innerHTML = ""
-
-    net[0] = new Neurona([3, 5, 1]);
-    net[1] = new Neurona([3, 5, 1]);
-    net[2] = new Neurona([3, 5, 1]);
 }
 
 function play(picker) {
     if (document.readyState === 'complete') {
         let chanels = Object.values(picker.channels)
-        chanels = chanels.map(x=> Math.round(x));
         let output = [];
- 
-        output.push(net[0].run([chanels[0], chanels[1], chanels[2]]));
-        output.push(net[1].run([chanels[0], chanels[1], chanels[2]]));
-        output.push(net[2].run([chanels[0], chanels[1], chanels[2]]));
+        let color;
+        let color_rgba;
+
+        chanels = chanels.map(x=> Math.round(x/255));
+
+        net.forEach(net_=>{
+            output.push(net_.run([chanels[0], chanels[1], chanels[2]]));
+        })
 
         output = output.map(x => { return Math.round(x * 255) });
 
+        if (type_mode == "bw" || type_mode == "gs") {
+            if (type_mode == "bw"){
+                // Funcion de escalonaje
+                output[0] = output[0] <= 0.5 ?0:1;
+            }
+            color = `rgb(${output[0]}, ${output[0]}, ${output[0]})`
+            color_rgba = `rgba(${output[0]}, ${output[0]}, ${output[0]}, 0.25)`
+        }else{
+            color = `rgb(${output[0]}, ${output[1]}, ${output[2]})`
+            color_rgba = `rgba(${output[0]}, ${output[1]}, ${output[2]}, 0.25)`
+        }
+
+
         play_txt_bg.setAttribute('fill', `${picker.toRGBString() }`);
         deco5.setAttribute('fill', ` rgba(${ output[0]}, ${ output[1]}, ${ output[2]}, 0.25)`);
-        play_txt.style.color  = ` rgb(${output[0]}, ${output[1]}, ${output[2]})`
+        play_txt.style.color = color
         play_contrast.style.color  = `${picker.toRGBString()}`;
-        play_contrast.style.backgroundColor = ` rgb(${output[0]}, ${output[1]}, ${output[2]})`;
+        play_contrast.style.backgroundColor = color;
 
         let text =
-        `Text color:  rgb(${output[0]}, ${output[1]}, ${output[2]})
+        `Text color:  ${color})
 Background Color: ${picker.toRGBString() }
-BackGround 2 color: rgba(${ output[0]}, ${output[1]}, ${output[2]}, 0.25)
+BackGround 2 color: ${color_rgba}
             ` 
 
         output_text.value = text;
@@ -197,9 +307,33 @@ BackGround 2 color: rgba(${ output[0]}, ${output[1]}, ${output[2]}, 0.25)
 }
 
 function reset(data_){
+    net = [];
     clear();
     data = data_;
-    fieldTable(data)
-    train(data)
-    play(background_color_play.jscolor)
+    fieldTable(data);
+    createNet();
+    train(data);
+    play(background_color_play.jscolor);
+}
+
+function createNet(){
+    net = [];
+    switch (type_mode) {
+        case 'bw':
+            net.push(new Neurona([3, 4, 1]));
+            break;
+        case 'gs':
+            net.push(new Neurona([3, 4, 1]));
+            break;
+        case 'rgb':
+            net.push(new Neurona([3, 4, 1]));
+            net.push(new Neurona([3, 4, 1]));
+            net.push(new Neurona([3, 4, 1]));
+            break;
+        case 'train_ri':
+            net.push(new Neurona([3, 4, 1]));
+            net.push(new Neurona([3, 4, 1]));
+            net.push(new Neurona([3, 4, 1]));
+            break;
+    }
 }
