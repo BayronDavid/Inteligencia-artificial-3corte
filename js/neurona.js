@@ -1,65 +1,50 @@
 export class Neurona {
-    entradas = 0;
     pesos = [];
-    sesgo = 1 / 100;
+    sesgo = null;
+    ratioEntrenamiento = 0.001;
 
-    constructor(entradas = 0) {
-        this.entradas = entradas;
-        for (let i = 0; i < entradas; i++) {
+    constructor(numPesos) {
+        for (let i = 0; i < numPesos; i++) {
             this.pesos[i] = this.random();
         }
-    }
-    random = () => (Math.random() - (1 / 2));
+        this.sesgo = this.random();
 
-    pensar(dataset = []) {
-        let respuesta = 0;
-        for (let i = 0; i < this.entradas; i++) {
-            respuesta += this.pesos[i] * dataset[i];
+    }
+    random = () => (Math.random() * (0.5 + 0.5)- (0.5));
+
+    run(input){
+        let output = 0;
+        for (let index = 0; index < input.length; index++) {
+
+            output += this.pesos[index] * input[index];
         }
-        return respuesta;
+        output += this.sesgo;
+        return output;
     }
 
-    entrenar(input, output) {
-        let error_total = 0;
-        // Entrenamiento
-        for (let entrada = 0; entrada < this.entradas; entrada++) {
-            let respuesta = this.pensar(input[entrada]);
-            let error = output[entrada] - respuesta;
-            // Valor absoluto del error
-            error_total += (error < 0 ? (error * -1) : error);
-            this.aprender(error, entrada);
-        }
-        return error_total;
-    }
+    train(epochs, input_, output_) {
+        for (let i = 0; i < epochs; i++) {
+            let errorEpoch = 0;
+            for (let j = 0; j < input_.length; j++) {
+                let currentInput = input_[j];
+                let currentOutput   = output_[j];
+                let output          = this.run(currentInput);
+                let error           = currentOutput - output;  
 
-    entrenarHasta(repeticiones, input, output) {
-        console.log("Aprendiendo...");
-        for (let i = 0; i < repeticiones; i++) {
-            this.entrenar(input, output)
+                errorEpoch += Math.abs(error);
+                // this.ajustePesos(error, currentInput)
+            }            
+            // console.log(errorEpoch /input_.length);
         }
     }
 
-    aprender(error, peso) {
-        this.pesos[peso] += error * this.sesgo;
+    ajustePesos(error, input){
+        for (let i = 0; i < this.pesos.length; i++) {
+            let ajuste = error * this.ratioEntrenamiento * input[i];
+            this.pesos[i] += ajuste;         
+        }
+        let ajuste = error * this.ratioEntrenamiento * 1;
+        this.sesgo += ajuste;
     }
 }
 
-
-
-// const input = [
-//     [1, 0, 0], // Piedra
-//     [0, 1, 0], // Papel
-//     [0, 0, 1] // Tijera
-// ];
-// const output = [
-//     -1, // Piedra entonces papel
-//     0,  // Papel entonces tijeras
-//     1   // Tijeras entonces piedra
-// ];
-
-// const cerebro = [];
-// cerebro[0] = new neurona(3);
-
-// for (var i = 0; i < 1000; i++) {
-//     console.log(cerebro[0].entrenar(input, output))
-// }
