@@ -100,3 +100,15 @@ fieldset {
 .output>textarea{
     width: 80%;
 }
+
+label{
+    cursor: pointer;
+}
+
+.instructions{
+    max-height: 20vh;
+    border: 1px solid gray;
+    overflow: auto;
+    text-align: start;
+    padding: 5px;
+}

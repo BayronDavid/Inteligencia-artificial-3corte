@@ -3,7 +3,6 @@ import {Neurona} from './perceptron.js'
 import bw_data  from '../data/BlackWhite.json'  assert {type: 'json'} 
 import gs_data  from '../data/Grayscale.json'   assert {type: 'json'} 
 import rgb_data from '../data/RGB.json'         assert {type: 'json'} 
-import train_data from '../data/Train.json'         assert {type: 'json'} 
 
 var send_button             = document.getElementById('send-button');
 var train_button            = document.getElementById('train-button');
@@ -27,9 +26,6 @@ const bw_rd     =  document.getElementById("bw")
 const gs_rd     = document.getElementById("gs") 
 const rgb_rd    = document.getElementById("rgb") 
 
-// const train_ri      = document.getElementById("train_ri") 
-// const train_field   = document.getElementById("train_field") 
-// const btn_train     = document.getElementById("btn_train") 
 
 const epochs  = document.getElementById("epochs") 
 
@@ -39,10 +35,12 @@ var type_mode = 'bw';
 
 var net = [];
 
-var data = [];
+var local_data = [];
+
+
 // Initializations
 window.onload = function(){
-    data = bw_data;
+    local_data = bw_data;
     // Table
     fieldTable(bw_data);
     // create neural networks by type_mode
@@ -56,11 +54,6 @@ window.onload = function(){
 // Listen mode_inputs changes
 mode_inputs.forEach(input=>{
     input.addEventListener('change', ()=>{
-        if(!train_ri.checked){
-            train_field.classList.add('disable')
-            btn_train.classList.add('disable')
-        }
-
         switch(input.id){
             case 'bw': 
             if(input.checked){
@@ -80,14 +73,6 @@ mode_inputs.forEach(input=>{
                     reset(rgb_data);
                 }
                 break;
-            case 'train_ri': 
-                if (input.checked) {
-                    type_mode = input.id;
-                    reset(train_data);
-                    train_field.classList.remove('disable')
-                    btn_train.classList.remove('disable')
-                }
-                break;
         }
     })
 })
@@ -95,26 +80,29 @@ mode_inputs.forEach(input=>{
 send_button.addEventListener('click', ()=>{
     let chanelsBG = Object.values(background_color.jscolor.channels).map(Math.floor);
     let chanelsTxt = Object.values(text_color   .jscolor.channels).map(Math.floor);
-
-    data.push([chanelsBG[0], chanelsBG[1], chanelsBG[2], chanelsTxt[0], chanelsTxt[1], chanelsTxt[2]])
     
     // Si es blanco y negro o escala de grises,  no invertir colores 
     if(bw_rd.checked || gs_rd.checked){
-        fieldTable([[chanelsBG[0], chanelsBG[1], chanelsBG[2], chanelsTxt[0], chanelsTxt[1], chanelsTxt[2]]])
+        chanelsTxt[0] = math.mean(chanelsTxt[0], chanelsTxt[1], chanelsTxt[2]);
+        if (type_mode == "bw") {
+            // Funcion de escalonaje
+            chanelsTxt[0] = chanelsTxt[0]/255 <= 0.5 ? 0 : 255;
+        }
+        local_data.push([chanelsBG[0], chanelsBG[1], chanelsBG[2], chanelsTxt[0]])
+        fieldTable([[chanelsBG[0], chanelsBG[1], chanelsBG[2], chanelsTxt[0]]])
     }else{
         // Se envierten las entradas y salidas con el fin de generar mas datos de entrenamiento
         // Si entra [0, 0, 0] -> [255, 255, 255] se genera otro dato [22, 255, 0] -> [0, 0, 0]
-        data.push([chanelsTxt[0], chanelsTxt[1], chanelsTxt[2], chanelsBG[0], chanelsBG[1], chanelsBG[2]])
+        local_data.push([chanelsTxt[0], chanelsTxt[1], chanelsTxt[2], chanelsBG[0], chanelsBG[1], chanelsBG[2]])
         fieldTable([[chanelsTxt[0], chanelsTxt[1], chanelsTxt[2], chanelsBG[0], chanelsBG[1], chanelsBG[2]]])
         fieldTable([[chanelsBG[0], chanelsBG[1], chanelsBG[2], chanelsTxt[0], chanelsTxt[1], chanelsTxt[2]]])
     }
-
 })
 
 train_button.addEventListener('click', ()=>{
-    train(data);
+    train(local_data);
     play(background_color_play.jscolor)
-    console.log(JSON.stringify(data));
+    console.log(JSON.stringify(local_data));
 })
 
 background_color_play.oninput = function () {
@@ -177,22 +165,6 @@ function fieldTable(data){
 
             thead.innerHTML = head;
             break;
-        case 'train_ri':
-            head = `<tr>
-                            <th colspan="3">Background</th>
-                            <th colspan="3">Text</th>
-                        </tr>
-                        <tr>
-                            <th>R</th>
-                            <th>G</th>
-                            <th>B</th>
-                            <th>R</th>
-                            <th>G</th>
-                            <th>B</th>
-                        </tr>`
-
-            thead.innerHTML = head;
-            break;
     }
 
     if(data.length != 0){
@@ -228,28 +200,28 @@ function train(data){
     if(data.length != 0){
         let input   = [];
         let outputs = [];
+        let aux = []
+        let aux_2= []
+
         data.forEach((item, index) => {
             input.push([item[0]/255, item[1]/255, item[2]/255]);
-            
+
             if(type_mode == "bw" || type_mode == "gs"){
-                let aux = []
                 aux.push([item[3] / 255]);
-                aux.push([item[3] / 255]);
-                aux.push([item[3] / 255]);
-
-                outputs.push(aux);
             }else{
-                let aux = []
-                aux.push([item[3] / 255]);
-                aux.push([item[4] / 255]);
-                aux.push([item[5] / 255]);
-
-                outputs.push(aux);
+                aux_2 = [];
+                aux_2.push([item[3] / 255], [item[4] / 255], [item[5] / 255]);
+                aux.push(aux_2);
             }
         });
 
+        outputs.push(aux);
+
         net.forEach((net_, index) =>{
-            net_.train({ input: input, output: outputs[index], epochs: epochs.value});
+            console.log(input, outputs[index]);
+            for (let i = 0; i < outputs[index].length; i++) {
+                net_.train({ input: input, output: outputs[index], epochs: epochs.value});
+            }
         })
 
     }else{
@@ -258,8 +230,10 @@ function train(data){
 }
 
 function clear(){
-    data = [];
+    local_data = [];
+    net = [];
     tbody.innerHTML = ""
+    return null;
 }
 
 function play(picker) {
@@ -275,12 +249,13 @@ function play(picker) {
             output.push(net_.run([chanels[0], chanels[1], chanels[2]]));
         })
 
+
         output = output.map(x => { return Math.round(x * 255) });
 
         if (type_mode == "bw" || type_mode == "gs") {
             if (type_mode == "bw"){
                 // Funcion de escalonaje
-                output[0] = output[0] <= 0.5 ?0:1;
+                output[0] = output[0]/255 <= 0.5 ?0:255;
             }
             color = `rgb(${output[0]}, ${output[0]}, ${output[0]})`
             color_rgba = `rgba(${output[0]}, ${output[0]}, ${output[0]}, 0.25)`
@@ -306,10 +281,8 @@ BackGround 2 color: ${color_rgba}
     }
 }
 
-function reset(data_){
-    net = [];
+function reset(data){
     clear();
-    data = data_;
     fieldTable(data);
     createNet();
     train(data);
@@ -326,11 +299,6 @@ function createNet(){
             net.push(new Neurona([3, 4, 1]));
             break;
         case 'rgb':
-            net.push(new Neurona([3, 4, 1]));
-            net.push(new Neurona([3, 4, 1]));
-            net.push(new Neurona([3, 4, 1]));
-            break;
-        case 'train_ri':
             net.push(new Neurona([3, 4, 1]));
             net.push(new Neurona([3, 4, 1]));
             net.push(new Neurona([3, 4, 1]));
