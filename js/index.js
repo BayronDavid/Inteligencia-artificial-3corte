@@ -205,25 +205,26 @@ function train(data){
 
         data.forEach((item, index) => {
             input.push([item[0]/255, item[1]/255, item[2]/255]);
-
+            
             if(type_mode == "bw" || type_mode == "gs"){
-                aux.push([item[3] / 255]);
+                outputs.push([item[3] / 255]);
             }else{
-                aux_2 = [];
-                aux_2.push([item[3] / 255], [item[4] / 255], [item[5] / 255]);
-                aux.push(aux_2);
+                outputs.push([item[3] / 255], [item[4] / 255], [item[5] / 255]);
             }
         });
 
-        outputs.push(aux);
 
         net.forEach((net_, index) =>{
-            console.log(input, outputs[index]);
-            for (let i = 0; i < outputs[index].length; i++) {
-                net_.train({ input: input, output: outputs[index], epochs: epochs.value});
+            if (type_mode == "bw" || type_mode == "gs") {
+                net_.train({ input: input, output: outputs, epochs: epochs.value});
+            }else{
+                let new_outputs = []
+                for (let i = 0; i < outputs.length; i+=3) {
+                    new_outputs.push(outputs[index + i]);        
+                }
+                net_.train({ input: input, output: new_outputs, epochs: epochs.value });
             }
         })
-
     }else{
         console.log('Without data');
     }
@@ -249,7 +250,6 @@ function play(picker) {
             output.push(net_.run([chanels[0], chanels[1], chanels[2]]));
         })
 
-
         output = output.map(x => { return Math.round(x * 255) });
 
         if (type_mode == "bw" || type_mode == "gs") {
@@ -266,7 +266,7 @@ function play(picker) {
 
 
         play_txt_bg.setAttribute('fill', `${picker.toRGBString() }`);
-        deco5.setAttribute('fill', ` rgba(${ output[0]}, ${ output[1]}, ${ output[2]}, 0.25)`);
+        deco5.setAttribute('fill', `${color_rgba}`);
         play_txt.style.color = color
         play_contrast.style.color  = `${picker.toRGBString()}`;
         play_contrast.style.backgroundColor = color;
@@ -276,7 +276,6 @@ function play(picker) {
 Background Color: ${picker.toRGBString() }
 BackGround 2 color: ${color_rgba}
             ` 
-
         output_text.value = text;
     }
 }

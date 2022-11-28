@@ -104,10 +104,10 @@ const dataGen = (num)=>{
 
 
 // const net = new Neurona([3, 5, 1]);
-const {x, y} = dataGen(3);
+// const {x, y} = dataGen(3);
 
-console.log(x);
-console.log(y);
+// console.log(x);
+// console.log(y);
 // net.train({input: x, output:y, epochs:1});
 
 // console.log("test: ", net.run([0.5, 0.1, 0.2]));
