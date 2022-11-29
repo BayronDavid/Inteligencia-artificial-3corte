@@ -1,7 +1,7 @@
 ﻿
 # Contraste de colores con redes neuronales
 
-Aplicacion web que permite entrenar un modelo de machine learning que cambia el color de un texto de manera automatica generando un contraste con su fondo, el usuario podra generar y visualizar los datos con los que entrenara el modelo. 
+Aplicación web que permite entrenar un modelo de machine learning que cambia el color de un texto de manera automática generando un contraste con su fondo, el usuario podrá generar y visualizar los datos con los que entrenara el modelo. 
 
 Demo : https://bayrondavid.github.io/Inteligencia-artificial-3corte/
 
