@@ -275,7 +275,16 @@ function play(picker) {
         `Text color:  ${color})
 Background Color: ${picker.toRGBString() }
 BackGround 2 color: ${color_rgba}
-            ` 
+
+
+
+
+
+
+
+
+Author: Bayron Morales - Nov 2022 
+GitHub: https://github.com/BayronDavid` 
         output_text.value = text;
     }
 }

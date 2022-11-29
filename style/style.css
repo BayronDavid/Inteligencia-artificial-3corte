@@ -112,3 +112,27 @@ label{
     text-align: start;
     padding: 5px;
 }
+
+
+@media (max-width: 900px) {
+    body{
+        overflow: auto;
+    }
+    .grid {
+        grid-auto-flow: dense;  
+        grid-template-columns:1fr;
+        grid-template-rows:1fr 1fr;
+    }
+
+    .train {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+
+    .demo{
+        grid-row: 1;
+    }
+    .range{
+        display: none;
+    }
+}
